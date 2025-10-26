@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Code Generator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark-bg: #0a0e27;
+            --dark-secondary: #141829;
+            --text-primary: #e8eaf6;
+            --text-secondary: #b0bec5;
+            --border-color: rgba(102, 126, 234, 0.2);
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            height: 70px;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scale(1.3);
+        }
+
+        .pages-wrapper {
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+        }
+
+        .page-content {
+            width: 100%;
+            max-width: 900px;
+            animation: slideIn 0.6s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .feature-item {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-item-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-item h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            font-size: 0.9em;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(20, 24, 41, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper select {
+            flex: 1;
+        }
+
+        .input-wrapper input {
+            flex: 2;
+        }
+
+        .btn-add-field {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-add-field:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .fields-container {
+            background: rgba(20, 24, 41, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .field-item {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .field-name {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .field-type {
+            font-size: 0.8em;
+            color: var(--primary);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .btn-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #ff5252;
+        }
+
+        .checkbox-group {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-item:last-child {
+            margin-bottom: 0;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .code-output {
+            background: rgba(15, 15, 30, 0.9);
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 450px;
+            overflow-y: auto;
+            line-height: 1.6;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-output.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: var(--text-secondary);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 100, 150, 0.5);
+            color: white;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(100, 100, 150, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 800px) {
+            .feature-list, .stats {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .page.active {
+                padding: 40px 20px;
+            }
+
+            nav {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">💻 CodeGen Pro</div>
+        <div class="progress-dots">
+            <div class="progress-dot active" onclick="switchPage(0)"></div>
+            <div class="progress-dot" onclick="switchPage(1)"></div>
+            <div class="progress-dot" onclick="switchPage(2)"></div>
+            <div class="progress-dot" onclick="switchPage(3)"></div>
+        </div>
+    </nav>
+
+    <div class="pages-wrapper">
+        <!-- Page 1: Welcome -->
+        <div class="page active" id="page-0">
+            <div class="page-content">
+                <div style="text-align: center;">
+                    <div class="icon">💻</div>
+                    <h1>Java Code Generator Pro</h1>
+                    <p>Generate professional, compile-ready Java classes instantly</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-item-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Generate code in milliseconds with instant results</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">🎯</div>
+                        <h3>Smart Methods</h3>
+                        <p>Auto-generate getters, setters, constructors & more</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">✅</div>
+                        <h3>Compile Ready</h3>
+                        <p>Error-free code that compiles immediately</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">🎓</div>
+                        <h3>For Students</h3>
+                        <p>Perfect for engineering projects and Java learning</p>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" onclick="switchPage(1)">Next → Get Started</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Configuration -->
+        <div class="page" id="page-1">
+            <div class="page-content">
+                <h1 style="text-align: center;">⚙️ Configure Your Class</h1>
+
+                <div class="form-group">
+                    <label>Class Name *</label>
+                    <input type="text" id="className" placeholder="e.g., Student, Employee, Product">
+                </div>
+
+                <div class="form-group">
+                    <label>Add Fields</label>
+                    <div class="input-wrapper">
+                        <select id="fieldType">
+                            <option>String</option>
+                            <option>int</option>
+                            <option>double</option>
+                            <option>boolean</option>
+                            <option>long</option>
+                            <option>float</option>
+                            <option>char</option>
+                            <option>byte</option>
+                            <option>short</option>
+                        </select>
+                        <input type="text" id="fieldName" placeholder="Enter field name">
+                        <button class="btn-add-field" onclick="addField()">➕ Add</button>
+                    </div>
+                </div>
+
+                <div class="fields-container" id="fieldsContainer">
+                    <p style="color: var(--text-secondary); text-align: center; margin: 0;">No fields added yet</p>
+                </div>
+
+                <h3 style="margin-top: 30px; color: var(--text-primary); font-size: 1.2em;">Methods to Generate</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-default-constructor" checked>
+                        <label for="gen-default-constructor">Default Constructor</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-parameterized-constructor" checked>
+                        <label for="gen-parameterized-constructor">Parameterized Constructor</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-getterssetters" checked>
+                        <label for="gen-getterssetters">Getters & Setters</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-tostring" checked>
+                        <label for="gen-tostring">toString() Method</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-equals" checked>
+                        <label for="gen-equals">equals() Method</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-hashcode" checked>
+                        <label for="gen-hashcode">hashCode() Method</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-main">
+                        <label for="gen-main">main() Method (for testing)</label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(0)">← Previous</button>
+                    <button class="btn btn-primary" onclick="generateAndGo()">Next → Preview Code</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Code Generator -->
+        <div class="page" id="page-2">
+            <div class="page-content">
+                <h1 style="text-align: center;">📄 Your Generated Code</h1>
+                <div class="code-output empty" id="codeOutput">Click Previous to configure and generate your code</div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-info" onclick="copyCode()">📋 Copy Code</button>
+                    <button class="btn btn-success" onclick="downloadCode()">⬇️ Download .java</button>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(1)">← Previous</button>
+                    <button class="btn btn-primary" onclick="switchPage(3)">Next → Finish</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Thank You -->
+        <div class="page" id="page-3">
+            <div class="page-content">
+                <div style="text-align: center;">
+                    <div class="icon">🙏</div>
+                    <h1>Thank You!</h1>
+                    <p>We're thrilled you used Java Code Generator Pro!</p>
+                    <p>We hope this tool has made your coding journey smoother and more productive.</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Classes Generated</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">⚡</div>
+                        <div class="stat-label">Time Saved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">✨</div>
+                        <div class="stat-label">Quality Code</div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; margin-top: 30px; font-size: 1.3em;">We hope to see you again soon! 🚀</p>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(2)">← Previous</button>
+                    <button class="btn btn-primary" onclick="resetAndStart()">↻ Start Over</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">✓ Code copied to clipboard!</div>
+
+    <script>
+        let currentPage = 0;
+        let fields = [];
+
+        function switchPage(pageNum) {
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            document.querySelectorAll('.progress-dot')[currentPage].classList.remove('active');
+
+            currentPage = pageNum;
+            document.getElementById(`page-${currentPage}`).classList.add('active');
+            document.querySelectorAll('.progress-dot')[currentPage].classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        function addField() {
+            const type = document.getElementById('fieldType').value;
+            const name = document.getElementById('fieldName').value.trim();
+
+            if (!name) {
+                alert('Please enter a field name');
+                return;
+            }
+
+            if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+                alert('Invalid field name. Use only letters, numbers, and underscores (must start with letter or underscore)');
+                return;
+            }
+
+            if (fields.some(f => f.name === name)) {
+                alert('Field already exists');
+                return;
+            }
+
+            fields.push({ type, name });
+            document.getElementById('fieldName').value = '';
+            displayFields();
+        }
+
+        function removeField(index) {
+            fields.splice(index, 1);
+            displayFields();
+        }
+
+        function displayFields() {
+            const container = document.getElementById('fieldsContainer');
+
+            if (fields.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin: 0;">No fields added yet</p>';
+                return;
+            }
+
+            container.innerHTML = fields.map((f, i) => `
+                <div class="field-item">
+                    <div>
+                        <div class="field-name">${f.name}</div>
+                        <div class="field-type">${f.type}</div>
+                    </div>
+                    <button class="btn-remove" onclick="removeField(${i})">✕ Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function generateAndGo() {
+            const className = document.getElementById('className').value.trim();
+
+            if (!className) {
+                alert('Please enter a class name');
+                return;
+            }
+
+            if (!/^[A-Z][a-zA-Z0-9_]*$/.test(className)) {
+                alert('Invalid class name. Must start with uppercase letter and contain only letters, numbers, and underscores');
+                return;
+            }
+
+            if (fields.length === 0) {
+                alert('Please add at least one field');
+                return;
+            }
+
+            generateCode();
+            switchPage(2);
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function isPrimitiveType(type) {
+            return ['int', 'double', 'boolean', 'long', 'float', 'char', 'byte', 'short'].includes(type);
+        }
+
+        function generateCode() {
+            const className = document.getElementById('className').value.trim();
+            let code = `public class ${className} {\n`;
+
+            // Fields
+            code += '\n    // Fields\n';
+            fields.forEach(f => {
+                code += `    private ${f.type} ${f.name};\n`;
+            });
+
+            // Default Constructor
+            if (document.getElementById('gen-default-constructor').checked) {
+                code += '\n    // Default Constructor\n';
+                code += `    public ${className}() {\n`;
+                code += '    }\n';
+            }
+
+            // Parameterized Constructor
+            if (document.getElementById('gen-parameterized-constructor').checked) {
+                code += '\n    // Parameterized Constructor\n';
+                const params = fields.map(f => `${f.type} ${f.name}`).join(', ');
+                code += `    public ${className}(${params}) {\n`;
+                fields.forEach(f => {
+                    code += `        this.${f.name} = ${f.name};\n`;
+                });
+                code += '    }\n';
+            }
+
+            // Getters and Setters
+            if (document.getElementById('gen-getterssetters').checked) {
+                code += '\n    // Getters and Setters\n';
+                fields.forEach(f => {
+                    const cap = capitalize(f.name);
+                    code += `    public ${f.type} get${cap}() {\n`;
+                    code += `        return ${f.name};\n`;
+                    code += '    }\n\n';
+                    code += `    public void set${cap}(${f.type} ${f.name}) {\n`;
+                    code += `        this.${f.name} = ${f.name};\n`;
+                    code += '    }\n';
+                    if (f !== fields[fields.length - 1]) code += '\n';
+                });
+            }
+
+            // toString
+            if (document.getElementById('gen-tostring').checked) {
+                code += '\n    // toString Method\n';
+                code += '    @Override\n';
+                code += '    public String toString() {\n';
+                const fieldStrings = fields.map(f => `"${f.name}=" + ${f.name}`);
+                code += `        return "${className}{" +\n`;
+                fieldStrings.forEach((fs, i) => {
+                    code += `                ${fs}`;
+                    if (i < fieldStrings.length - 1) {
+                        code += ' + ", " +\n';
+                    } else {
+                        code += ' +\n';
+                    }
+                });
+                code += '                "}";\n';
+                code += '    }\n';
+            }
+
+            // equals
+            if (document.getElementById('gen-equals').checked) {
+                code += '\n    // equals Method\n';
+                code += '    @Override\n';
+                code += '    public boolean equals(Object obj) {\n';
+                code += '        if (this == obj) return true;\n';
+                code += '        if (obj == null || getClass() != obj.getClass()) return false;\n';
+                code += `        ${className} other = (${className}) obj;\n`;
+                
+                fields.forEach(f => {
+                    if (isPrimitiveType(f.type)) {
+                        if (f.type === 'double' || f.type === 'float') {
+                            code += `        if (${f.type === 'double' ? 'Double' : 'Float'}.compare(this.${f.name}, other.${f.name}) != 0) return false;\n`;
+                        } else {
+                            code += `        if (this.${f.name} != other.${f.name}) return false;\n`;
+                        }
+                    } else {
+                        code += `        if (this.${f.name} != null ? !this.${f.name}.equals(other.${f.name}) : other.${f.name} != null) return false;\n`;
+                    }
+                });
+                
+                code += '        return true;\n';
+                code += '    }\n';
+            }
+
+            // hashCode
+            if (document.getElementById('gen-hashcode').checked) {
+                code += '\n    // hashCode Method\n';
+                code += '    @Override\n';
+                code += '    public int hashCode() {\n';
+                code += '        int result = 1;\n';
+                
+                fields.forEach(f => {
+                    if (isPrimitiveType(f.type)) {
+                        if (f.type === 'int') {
+                            code += `        result = 31 * result + ${f.name};\n`;
+                        } else if (f.type === 'long') {
+                            code += `        result = 31 * result + (int) (${f.name} ^ (${f.name} >>> 32));\n`;
+                        } else if (f.type === 'double') {
+                            code += `        long temp = Double.doubleToLongBits(${f.name});\n`;
+                            code += `        result = 31 * result + (int) (temp ^ (temp >>> 32));\n`;
+                        } else if (f.type === 'float') {
+                            code += `        result = 31 * result + Float.floatToIntBits(${f.name});\n`;
+                        } else if (f.type === 'boolean') {
+                            code += `        result = 31 * result + (${f.name} ? 1 : 0);\n`;
+                        } else {
+                            code += `        result = 31 * result + (int) ${f.name};\n`;
+                        }
+                    } else {
+                        code += `        result = 31 * result + (${f.name} != null ? ${f.name}.hashCode() : 0);\n`;
+                    }
+                });
+                
+                code += '        return result;\n';
+                code += '    }\n';
+            }
+
+            // main method
+            if (document.getElementById('gen-main').checked) {
+                code += '\n    // Main Method (for testing)\n';
+                code += '    public static void main(String[] args) {\n';
+                code += '        java.util.Scanner scanner = new java.util.Scanner(System.in);\n';
+                code += `        System.out.println("=== ${className} Object Creator ===\\n");\n\n`;
+                
+                if (document.getElementById('gen-default-constructor').checked && document.getElementById('gen-getterssetters').checked) {
+                    code += `        // Create object using default constructor and setters\n`;
+                    code += `        ${className} obj1 = new ${className}();\n`;
+                    code += '        System.out.println("Enter details for Object 1:");\n';
+                    
+                    fields.forEach(f => {
+                        const cap = capitalize(f.name);
+                        code += `        System.out.print("Enter ${f.name} (${f.type}): ");\n`;
+                        
+                        if (f.type === 'String') {
+                            code += `        obj1.set${cap}(scanner.nextLine());\n`;
+                        } else if (f.type === 'int') {
+                            code += `        obj1.set${cap}(scanner.nextInt());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'double') {
+                            code += `        obj1.set${cap}(scanner.nextDouble());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'boolean') {
+                            code += `        obj1.set${cap}(scanner.nextBoolean());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'long') {
+                            code += `        obj1.set${cap}(scanner.nextLong());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'float') {
+                            code += `        obj1.set${cap}(scanner.nextFloat());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'char') {
+                            code += `        obj1.set${cap}(scanner.nextLine().charAt(0));\n`;
+                        } else if (f.type === 'byte') {
+                            code += `        obj1.set${cap}(scanner.nextByte());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'short') {
+                            code += `        obj1.set${cap}(scanner.nextShort());\n`;
+                            code += `        scanner.nextLine(); // consume newline\n`;
+                        }
+                    });
+                    
+                    if (document.getElementById('gen-tostring').checked) {
+                        code += '\n        System.out.println("\\n--- Object 1 Details ---");\n';
+                        code += '        System.out.println(obj1);\n';
+                    }
+                }
+                
+                if (document.getElementById('gen-parameterized-constructor').checked) {
+                    code += '\n        // Create object using parameterized constructor\n';
+                    code += '        System.out.println("\\nEnter details for Object 2:");\n';
+                    
+                    fields.forEach((f, idx) => {
+                        code += `        System.out.print("Enter ${f.name} (${f.type}): ");\n`;
+                        
+                        if (f.type === 'String') {
+                            code += `        ${f.type} ${f.name} = scanner.nextLine();\n`;
+                        } else if (f.type === 'int') {
+                            code += `        ${f.type} ${f.name} = scanner.nextInt();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'double') {
+                            code += `        ${f.type} ${f.name} = scanner.nextDouble();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'boolean') {
+                            code += `        ${f.type} ${f.name} = scanner.nextBoolean();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'long') {
+                            code += `        ${f.type} ${f.name} = scanner.nextLong();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'float') {
+                            code += `        ${f.type} ${f.name} = scanner.nextFloat();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'char') {
+                            code += `        ${f.type} ${f.name} = scanner.nextLine().charAt(0);\n`;
+                        } else if (f.type === 'byte') {
+                            code += `        ${f.type} ${f.name} = scanner.nextByte();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        } else if (f.type === 'short') {
+                            code += `        ${f.type} ${f.name} = scanner.nextShort();\n`;
+                            if (idx < fields.length - 1) code += `        scanner.nextLine(); // consume newline\n`;
+                        }
+                    });
+                    
+                    const params = fields.map(f => f.name).join(', ');
+                    code += `\n        ${className} obj2 = new ${className}(${params});\n`;
+                    
+                    if (document.getElementById('gen-tostring').checked) {
+                        code += '\n        System.out.println("\\n--- Object 2 Details ---");\n';
+                        code += '        System.out.println(obj2);\n';
+                    }
+                    
+                    if (document.getElementById('gen-equals').checked && document.getElementById('gen-default-constructor').checked) {
+                        code += '\n        // Compare objects\n';
+                        code += '        System.out.println("\\n--- Comparison ---");\n';
+                        code += '        System.out.println("Are obj1 and obj2 equal? " + obj1.equals(obj2));\n';
+                    }
+                    
+                    if (document.getElementById('gen-hashcode').checked) {
+                        code += '\n        // Display hash codes\n';
+                        code += '        System.out.println("\\n--- Hash Codes ---");\n';
+                        if (document.getElementById('gen-default-constructor').checked) {
+                            code += '        System.out.println("obj1 hashCode: " + obj1.hashCode());\n';
+                        }
+                        code += '        System.out.println("obj2 hashCode: " + obj2.hashCode());\n';
+                    }
+                } else if (document.getElementById('gen-hashcode').checked && document.getElementById('gen-default-constructor').checked) {
+                    code += '\n        System.out.println("\\n--- Hash Code ---");\n';
+                    code += '        System.out.println("obj1 hashCode: " + obj1.hashCode());\n';
+                }
+                
+                code += '\n        scanner.close();\n';
+                code += '    }\n';
+            }
+
+            code += '}\n';
+
+            const output = document.getElementById('codeOutput');
+            output.textContent = code;
+            output.classList.remove('empty');
+        }
+
+        function copyCode() {
+            const code = document.getElementById('codeOutput').textContent;
+            if (code.includes('Click Previous')) {
+                alert('Please generate code first!');
+                return;
+            }
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('✓ Code copied to clipboard!');
+            });
+        }
+
+        function downloadCode() {
+            const className = document.getElementById('className').value.trim();
+            const code = document.getElementById('codeOutput').textContent;
+            
+            if (code.includes('Click Previous')) {
+                alert('Please generate code first!');
+                return;
+            }
+            
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = className + '.java';
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotification('✓ File downloaded successfully!');
+        }
+
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2500);
+        }
+
+        function resetAndStart() {
+            fields = [];
+            document.getElementById('className').value = '';
+            document.getElementById('fieldName').value = '';
+            document.getElementById('codeOutput').textContent = 'Click Previous to configure and generate your code';
+            document.getElementById('codeOutput').classList.add('empty');
+            displayFields();
+            switchPage(0);
+        }
+
+        document.getElementById('fieldName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addField();
+        });
+
+        document.getElementById('className').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('fieldName').focus();
+        });
+    </script>
+</body>
+</html>
