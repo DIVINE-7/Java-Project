@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Code Generator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark-bg: #0a0e27;
+            --dark-secondary: #141829;
+            --text-primary: #e8eaf6;
+            --text-secondary: #b0bec5;
+            --border-color: rgba(102, 126, 234, 0.2);
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            height: 70px;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scale(1.3);
+        }
+
+        /* Pages Container */
+        .pages-wrapper {
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+        }
+
+        /* Page Content */
+        .page-content {
+            width: 100%;
+            max-width: 900px;
+            animation: slideIn 0.6s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .feature-item {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-item-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-item h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            font-size: 0.9em;
+            margin-bottom: 0;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(20, 24, 41, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper select {
+            flex: 1;
+        }
+
+        .input-wrapper input {
+            flex: 2;
+        }
+
+        .btn-add-field {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-add-field:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Fields Display */
+        .fields-container {
+            background: rgba(20, 24, 41, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .field-item {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .field-name {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .field-type {
+            font-size: 0.8em;
+            color: var(--primary);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .btn-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #ff5252;
+        }
+
+        /* Checkbox Styles */
+        .checkbox-group {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-item:last-child {
+            margin-bottom: 0;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        /* Code Output */
+        .code-output {
+            background: rgba(15, 15, 30, 0.9);
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 450px;
+            overflow-y: auto;
+            line-height: 1.6;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-output.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(36, 45, 74, 0.6);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 100, 150, 0.5);
+            color: white;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(100, 100, 150, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 800px) {
+            .feature-list, .stats {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .page.active {
+                padding: 40px 20px;
+            }
+
+            nav {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand">💻 CodeGen Pro</div>
+        <div class="progress-dots">
+            <div class="progress-dot active" onclick="switchPage(0)"></div>
+            <div class="progress-dot" onclick="switchPage(1)"></div>
+            <div class="progress-dot" onclick="switchPage(2)"></div>
+            <div class="progress-dot" onclick="switchPage(3)"></div>
+        </div>
+    </nav>
+
+    <!-- Pages -->
+    <div class="pages-wrapper">
+        <!-- Page 1: Welcome -->
+        <div class="page active" id="page-0">
+            <div class="page-content">
+                <div style="text-align: center;">
+                    <div class="icon">💻</div>
+                    <h1>Java Code Generator Pro</h1>
+                    <p>Generate professional Java classes instantly with enhanced features</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-item-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Generate code in milliseconds with instant results</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">🎯</div>
+                        <h3>Smart Methods</h3>
+                        <p>Auto-generate getters, setters, constructors & more</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">📥</div>
+                        <h3>Easy Export</h3>
+                        <p>Download generated code as .java files instantly</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-item-icon">🎓</div>
+                        <h3>For Students</h3>
+                        <p>Perfect for engineering projects and Java learning</p>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" onclick="switchPage(1)">Next → Get Started</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Configuration -->
+        <div class="page" id="page-1">
+            <div class="page-content">
+                <h1 style="text-align: center;">⚙️ Configure Your Class</h1>
+
+                <div class="form-group">
+                    <label>Class Name *</label>
+                    <input type="text" id="className" placeholder="e.g., Student, Employee, Product">
+                </div>
+
+                <div class="form-group">
+                    <label>Add Fields</label>
+                    <div class="input-wrapper">
+                        <select id="fieldType">
+                            <option>String</option>
+                            <option>int</option>
+                            <option>double</option>
+                            <option>boolean</option>
+                            <option>long</option>
+                            <option>float</option>
+                        </select>
+                        <input type="text" id="fieldName" placeholder="Enter field name">
+                        <button class="btn-add-field" onclick="addField()">➕ Add</button>
+                    </div>
+                </div>
+
+                <div class="fields-container" id="fieldsContainer">
+                    <p style="color: var(--text-secondary); text-align: center; margin: 0;">No fields added yet</p>
+                </div>
+
+                <h3 style="margin-top: 30px; color: var(--text-primary); font-size: 1.2em;">Methods to Generate</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-constructor" checked>
+                        <label for="gen-constructor">Constructor</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-getterssetters" checked>
+                        <label for="gen-getterssetters">Getters & Setters</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-tostring" checked>
+                        <label for="gen-tostring">toString() Method</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-equals" checked>
+                        <label for="gen-equals">equals() Method</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gen-hashcode" checked>
+                        <label for="gen-hashcode">hashCode() Method</label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(0)">← Previous</button>
+                    <button class="btn btn-primary" onclick="generateAndGo()">Next → Preview Code</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Code Generator -->
+        <div class="page" id="page-2">
+            <div class="page-content">
+                <h1 style="text-align: center;">📄 Your Generated Code</h1>
+                <div class="code-output empty" id="codeOutput">Click Previous to configure and generate your code</div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-info" onclick="copyCode()">📋 Copy Code</button>
+                    <button class="btn btn-success" onclick="downloadCode()">⬇️ Download .java</button>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(1)">← Previous</button>
+                    <button class="btn btn-primary" onclick="switchPage(3)">Next → Finish</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Thank You -->
+        <div class="page" id="page-3">
+            <div class="page-content">
+                <div style="text-align: center;">
+                    <div class="icon">🙏</div>
+                    <h1>Thank You!</h1>
+                    <p>We're thrilled you used Java Code Generator Pro!</p>
+                    <p>We hope this tool has made your coding journey smoother and more productive.</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Classes Generated</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">⚡</div>
+                        <div class="stat-label">Time Saved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">✨</div>
+                        <div class="stat-label">Quality Code</div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; margin-top: 30px; font-size: 1.3em;">We hope to see you again soon! 🚀</p>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="switchPage(2)">← Previous</button>
+                    <button class="btn btn-primary" onclick="switchPage(0)">↻ Start Over</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">✓ Code copied to clipboard!</div>
+
+    <script>
+        let currentPage = 0;
+        let fields = [];
+
+        function switchPage(pageNum) {
+            // Hide current page
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            document.querySelectorAll('.progress-dot')[currentPage].classList.remove('active');
+
+            // Show new page
+            currentPage = pageNum;
+            document.getElementById(`page-${currentPage}`).classList.add('active');
+            document.querySelectorAll('.progress-dot')[currentPage].classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        function addField() {
+            const type = document.getElementById('fieldType').value;
+            const name = document.getElementById('fieldName').value.trim();
+
+            if (!name) {
+                alert('Please enter a field name');
+                return;
+            }
+
+            if (fields.some(f => f.name === name)) {
+                alert('Field already exists');
+                return;
+            }
+
+            fields.push({ type, name });
+            document.getElementById('fieldName').value = '';
+            displayFields();
+        }
+
+        function removeField(index) {
+            fields.splice(index, 1);
+            displayFields();
+        }
+
+        function displayFields() {
+            const container = document.getElementById('fieldsContainer');
+
+            if (fields.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin: 0;">No fields added yet</p>';
+                return;
+            }
+
+            container.innerHTML = fields.map((f, i) => `
+                <div class="field-item">
+                    <div>
+                        <div class="field-name">${f.name}</div>
+                        <div class="field-type">${f.type}</div>
+                    </div>
+                    <button class="btn-remove" onclick="removeField(${i})">✕ Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function generateAndGo() {
+            const className = document.getElementById('className').value.trim();
+
+            if (!className) {
+                alert('Please enter a class name');
+                return;
+            }
+
+            if (fields.length === 0) {
+                alert('Please add at least one field');
+                return;
+            }
+
+            generateCode();
+            switchPage(2);
+        }
+
+        function generateCode() {
+            const className = document.getElementById('className').value.trim();
+            let code = `public class ${className} {\n`;
+
+            // Fields
+            code += '\n    // Fields\n';
+            fields.forEach(f => {
+                code += `    private ${f.type} ${f.name};\n`;
+            });
+
+            // Constructor
+            if (document.getElementById('gen-constructor').checked) {
+                code += '\n    // Constructor\n';
+                const params = fields.map(f => `${f.type} ${f.name}`).join(', ');
+                code += `    public ${className}(${params}) {\n`;
+                fields.forEach(f => {
+                    code += `        this.${f.name} = ${f.name};\n`;
+                });
+                code += '    }\n';
+            }
+
+            // Getters and Setters
+            if (document.getElementById('gen-getterssetters').checked) {
+                code += '\n    // Getters and Setters\n';
+                fields.forEach(f => {
+                    const cap = f.name.charAt(0).toUpperCase() + f.name.slice(1);
+                    code += `    public ${f.type} get${cap}() {\n        return ${f.name};\n    }\n\n`;
+                    code += `    public void set${cap}(${f.type} ${f.name}) {\n        this.${f.name} = ${f.name};\n    }\n\n`;
+                });
+            }
+
+            // toString
+            if (document.getElementById('gen-tostring').checked) {
+                code += '\n    @Override\n    public String toString() {\n';
+                const parts = fields.map(f => `"${f.name}=" + ${f.name}`).join(' + ", " + ');
+                code += `        return "${className}{" + ${parts} + "}";\n    }\n`;
+            }
+
+            // equals
+            if (document.getElementById('gen-equals').checked) {
+                code += '\n    @Override\n    public boolean equals(Object obj) {\n';
+                code += '        if (!(obj instanceof ' + className + ')) return false;\n';
+                code += `        ${className} other = (${className}) obj;\n`;
+                fields.forEach(f => {
+                    code += `        if (!java.util.Objects.equals(this.${f.name}, other.${f.name})) return false;\n`;
+                });
+                code += '        return true;\n    }\n';
+            }
+
+            // hashCode
+            if (document.getElementById('gen-hashcode').checked) {
+                code += '\n    @Override\n    public int hashCode() {\n';
+                code += `        return java.util.Objects.hash(${fields.map(f => f.name).join(', ')});\n    }\n`;
+            }
+
+            code += '}\n';
+
+            const output = document.getElementById('codeOutput');
+            output.textContent = code;
+            output.classList.remove('empty');
+        }
+
+        function copyCode() {
+            const code = document.getElementById('codeOutput').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification();
+            });
+        }
+
+        function downloadCode() {
+            const className = document.getElementById('className').value.trim();
+            const code = document.getElementById('codeOutput').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = className + '.java';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showNotification() {
+            const notif = document.getElementById('notification');
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2500);
+        }
+
+        document.getElementById('fieldName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addField();
+        });
+    </script>
+</body>
+</html>
